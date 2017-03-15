@@ -1,11 +1,12 @@
 ﻿using FluentAssertions;
-using System;
 using Xunit;
 
 namespace IntechCode.Tests
 {
+    [NUnit.Framework.TestFixture]
     public class HelloWorldTests
     {
+        [NUnit.Framework.Test]
         [Fact]
         public void HelloWorld_says_hello_in_hexadecimal()
         {
