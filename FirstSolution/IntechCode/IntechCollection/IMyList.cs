@@ -2,7 +2,7 @@
 
 namespace IntechCode.IntechCollection
 {
-    public interface IMyList<T>
+    public interface IMyList<T> : IMyReadOnlyList<T>
     {
         void Add( T item );
 
@@ -10,11 +10,9 @@ namespace IntechCode.IntechCollection
 
         void Insert( int index, T item );
 
-        int Count { get; }
-
         int IndexOf( T item );
 
-        T this[ int index ] { get; set; }
+        new T this[ int index ] { get; set; }
     }
 
 }
