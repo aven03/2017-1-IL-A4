@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using IntechCode.IntechCollection;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,9 +8,11 @@ using Xunit;
 
 namespace IntechCode.Tests
 {
+    [TestFixture]
     public class MyDictionaryTests
     {
         [Fact]
+        [Test]
         public void modulo_in_csharp_propagates_negative_value()
         {
             {
@@ -25,6 +28,7 @@ namespace IntechCode.Tests
         }
 
         [Fact]
+        [Test]
         public void adding_existing_key_throws_an_exception()
         {
             var d = new MyDictionary<int, string>();
@@ -38,6 +42,7 @@ namespace IntechCode.Tests
         }
 
         [Fact]
+        [Test]
         public void iterating_on_a_dictionary_gives_the_KeyValuePair_items()
         {
             var d = new MyDictionary<int, string>();
@@ -55,7 +60,7 @@ namespace IntechCode.Tests
             turn.Should().Be(3);
         }
 
-        [Theory]
+        [Xunit.Theory]
         [InlineData(56)]
         [InlineData(979)]
         [InlineData(-143)]
@@ -63,6 +68,14 @@ namespace IntechCode.Tests
         [InlineData(10928)]
         [InlineData(365)]
         [InlineData(0)] // No seed!
+        // For NUnit
+        [TestCase(56)]
+        [TestCase(979)]
+        [TestCase(-143)]
+        [TestCase(98)]
+        [TestCase(10928)]
+        [TestCase(365)]
+        [TestCase(0)] // No seed!
         public void ContainsKey_in_a_dictionary( int seed )
         {
             // Arrange
@@ -96,7 +109,6 @@ namespace IntechCode.Tests
                 var rand = r.Next();
                 if (keys.IndexOf(rand) < 0) keys.Add(rand);
             }
-
             return keys;
         }
     }

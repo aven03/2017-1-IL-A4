@@ -27,16 +27,36 @@ namespace IntechCode.IntechCollection
             _buckets = new Node[7];
         }
 
-        public TValue this[TKey key] => throw new NotImplementedException();
+        public TValue this[TKey key]
+        {
+            get
+            {
+                int idxBucket = Math.Abs(key.GetHashCode()) % _buckets.Length;
+                Node n = _buckets[idxBucket];
+                if (n == null || (n = FindIn(n,key)) == null ) throw new KeyNotFoundException();
+                return n.Data.Value;
+            }
+            set => DoAdd(key, value, true);
+        }
 
         public int Count => _count;
 
         public void Add(TKey key, TValue value)
         {
+            DoAdd(key, value, false);
+        }
+
+        private void DoAdd(TKey key, TValue value, bool allowUpdate)
+        {
             int idxBucket = Math.Abs(key.GetHashCode()) % _buckets.Length;
             Node head = _buckets[idxBucket];
-            if (head != null && FindIn(head, key) != null )
+            if (head != null && (head = FindIn(head, key)) != null)
             {
+                if(allowUpdate)
+                {
+                    head.Data = new KeyValuePair<TKey, TValue>(head.Data.Key, value);
+                    return;
+                }
                 throw new Exception("Duplicate key.");
             }
             _buckets[idxBucket] = new Node()

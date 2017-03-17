@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-#if NETCOREAPP1_0
-
 namespace NUnit.Framework
 {
+
+#if NETCOREAPP1_0
+
     class TestAttribute : Attribute
     {
     }
@@ -14,6 +15,14 @@ namespace NUnit.Framework
     {
     }
 
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    class TestCaseAttribute : Attribute
+    {
+        public TestCaseAttribute(params object[] parameters)
+        {
+        }
+    }
+#endif
+
 }
 
-#endif
