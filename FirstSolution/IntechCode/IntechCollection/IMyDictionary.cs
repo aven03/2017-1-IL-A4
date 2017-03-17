@@ -28,12 +28,13 @@ namespace IntechCode.IntechCollection
         bool ContainsKey(TKey key);
 
         /// <summary>
-        /// Gets the value associated to a key.
-        /// When the key DOES NOT EXIST: <see cref="KeyNotFoundException"/>.
+        /// Gets or sets the value associated to a key.
+        /// When getting, if the key DOES NOT EXIST: <see cref="KeyNotFoundException"/>.
+        /// When setting, the value is added or updated.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        TValue this[TKey key] { get; }
+        TValue this[TKey key] { get; set; }
 
 
         bool TryGetValue(TKey key, out TValue value);
