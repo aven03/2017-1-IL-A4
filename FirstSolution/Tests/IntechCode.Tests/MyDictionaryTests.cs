@@ -13,7 +13,7 @@ namespace IntechCode.Tests
     {
         [Fact]
         [Test]
-        public void modulo_in_csharp_propagates_negative_value()
+        public void Modulo_in_csharp_propagates_negative_value()
         {
             {
                 int i = -3;
@@ -29,7 +29,7 @@ namespace IntechCode.Tests
 
         [Fact]
         [Test]
-        public void adding_existing_key_throws_an_exception()
+        public void Adding_existing_key_throws_an_exception()
         {
             var d = new MyDictionary<int, string>();
             d.Add(1, "One");
@@ -43,7 +43,7 @@ namespace IntechCode.Tests
 
         [Fact]
         [Test]
-        public void iterating_on_a_dictionary_gives_the_KeyValuePair_items()
+        public void Iterating_on_a_dictionary_gives_the_KeyValuePair_items()
         {
             var d = new MyDictionary<int, string>();
             d.Add(1, "One");
@@ -90,7 +90,7 @@ namespace IntechCode.Tests
         {
             // Arrange
             var r = seed == 0 ? new Random() : new Random( seed );
-            MyList<int> keys = CreateRandomListOfUniqueNumber(r);
+            MyList<int> keys = CreateRandomListOfUniqueNumber(r, r.Next(30) );
             var sut = new MyDictionary<int, string>();
             // Act: adds unique numbers to the sut.
             foreach (var num in keys)

@@ -24,7 +24,7 @@ namespace IntechCode.IntechCollection
 
         public MyDictionary()
         {
-            _buckets = new Node[1];
+            _buckets = new Node[7];
         }
 
         public TValue this[TKey key]
@@ -86,11 +86,6 @@ namespace IntechCode.IntechCollection
             return head != null ? FindIn(head, key) != null : false;
         }
 
-        public IMyEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
         public bool Remove(TKey key)
         {
             throw new NotImplementedException();
@@ -108,5 +103,44 @@ namespace IntechCode.IntechCollection
             value = n.Data.Value;
             return true;
         }
+
+        class E : IMyEnumerator<KeyValuePair<TKey,TValue>>
+        {
+            readonly MyDictionary<TKey,TValue> _dictionnary;
+            Node _currentNode;
+            int _currentIndex;
+
+            public E(MyDictionary<TKey, TValue> theDict)
+            {
+                _dictionnary = theDict;
+                _currentIndex = -1;
+            }
+
+            public KeyValuePair<TKey, TValue> Current  => _currentNode.Data;
+
+            public bool MoveNext()
+            {
+                if( _currentNode != null && _currentNode.Next != null)
+                {
+                    _currentNode = _currentNode.Next;
+                    return true;
+                }
+                while (++_currentIndex < _dictionnary._buckets.Length)
+                {
+                    if (_dictionnary._buckets[_currentIndex] != null)
+                    {
+                        _currentNode = _dictionnary._buckets[_currentIndex];
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        public IMyEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            return new E(this);
+        }
+
     }
 }
