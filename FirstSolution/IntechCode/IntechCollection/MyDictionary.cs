@@ -24,17 +24,16 @@ namespace IntechCode.IntechCollection
 
         public MyDictionary()
         {
-            _buckets = new Node[7];
+            _buckets = new Node[1];
         }
 
         public TValue this[TKey key]
         {
             get
             {
-                int idxBucket = Math.Abs(key.GetHashCode()) % _buckets.Length;
-                Node n = _buckets[idxBucket];
-                if (n == null || (n = FindIn(n,key)) == null ) throw new KeyNotFoundException();
-                return n.Data.Value;
+                TValue found;
+                if (TryGetValue(key, out found)) return found;
+                throw new KeyNotFoundException();
             }
             set => DoAdd(key, value, true);
         }
@@ -46,15 +45,16 @@ namespace IntechCode.IntechCollection
             DoAdd(key, value, false);
         }
 
-        private void DoAdd(TKey key, TValue value, bool allowUpdate)
+        void DoAdd(TKey key, TValue value, bool allowUpdate)
         {
             int idxBucket = Math.Abs(key.GetHashCode()) % _buckets.Length;
             Node head = _buckets[idxBucket];
-            if (head != null && (head = FindIn(head, key)) != null)
+            Node found;
+            if (head != null && (found = FindIn(head, key)) != null)
             {
                 if(allowUpdate)
                 {
-                    head.Data = new KeyValuePair<TKey, TValue>(head.Data.Key, value);
+                    found.Data = new KeyValuePair<TKey, TValue>(found.Data.Key, value);
                     return;
                 }
                 throw new Exception("Duplicate key.");
@@ -98,7 +98,15 @@ namespace IntechCode.IntechCollection
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            throw new NotImplementedException();
+            int idxBucket = Math.Abs(key.GetHashCode()) % _buckets.Length;
+            Node n = _buckets[idxBucket];
+            if (n == null || (n = FindIn(n, key)) == null)
+            {
+                value = default(TValue);
+                return false;
+            }
+            value = n.Data.Value;
+            return true;
         }
     }
 }

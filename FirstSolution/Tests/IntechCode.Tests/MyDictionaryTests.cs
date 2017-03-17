@@ -60,6 +60,16 @@ namespace IntechCode.Tests
             turn.Should().Be(3);
         }
 
+        [Test]
+        [Fact]
+        public void finding_a_value()
+        {
+            var d = new MyDictionary<string, int>();
+            d.Add("One", 1);
+            d.ContainsKey("One").Should().BeTrue();
+            d["One"].Should().Be(1);
+        }
+
         [Xunit.Theory]
         [InlineData(56)]
         [InlineData(979)]
