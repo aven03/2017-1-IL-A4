@@ -47,7 +47,7 @@ namespace IntechCode.IntechCollection
             ++_count;
         }
 
-        object FindIn(Node head, TKey key)
+        Node FindIn(Node head, TKey key)
         {
             Debug.Assert(head != null);
             do
@@ -61,7 +61,9 @@ namespace IntechCode.IntechCollection
 
         public bool ContainsKey(TKey key)
         {
-            throw new NotImplementedException();
+            int idxBucket = Math.Abs(key.GetHashCode()) % _buckets.Length;
+            Node head = _buckets[idxBucket];
+            return head != null ? FindIn(head, key) != null : false;
         }
 
         public IMyEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
