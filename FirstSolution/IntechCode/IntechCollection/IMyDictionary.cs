@@ -4,13 +4,8 @@ using System.Text;
 
 namespace IntechCode.IntechCollection
 {
-    public interface IMyDictionary<TKey,TValue> : IMyEnumerable<KeyValuePair<TKey,TValue>>
+    public interface IMyDictionary<TKey,TValue> : IMyReadOnlyCollection<KeyValuePair<TKey,TValue>>
     {
-        /// <summary>
-        /// Gets the count of key-value pairs that exist in this dictionary.
-        /// </summary>
-        int Count { get; }
-
         /// <summary>
         /// Adds a key-value pair. The key must not already exist.
         /// </summary>
