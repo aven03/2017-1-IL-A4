@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using IntechCode.IntechCollection;
+using IntechCode.LinqPlus;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -35,6 +37,15 @@ namespace IntechCode.Tests
 
         }
 
+        public void Fibo()
+        {
+            int num = 0;
+            foreach( var i in LinqHelpers.Fibonacci().Take( 300 ))
+            {
+                i.Should().Be(LinqHelpers.Fibonacci(num));
+                ++num;
+            }
+        }
     }
 
     static class MyLinqDeFou
@@ -94,6 +105,8 @@ namespace IntechCode.Tests
             foreach (var e in @this) ++i;
             return i;
         }
+
+
     }
 
 
