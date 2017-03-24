@@ -37,14 +37,26 @@ namespace IntechCode.Tests
 
         }
 
+        [Test]
+        [Fact]
         public void Fibo()
         {
             int num = 0;
-            foreach( var i in LinqHelpers.Fibonacci().Take( 300 ))
+            foreach (var i in LinqHelpers.Fibonacci().Take(30))
             {
                 i.Should().Be(LinqHelpers.Fibonacci(num));
                 ++num;
             }
+        }
+
+        [TestCase(44)]
+        public void Fibo_recursive_performance( int n )
+        {
+            Console.WriteLine("---");
+            Console.WriteLine($"FibIterable({n}) = {LinqHelpers.Fibonacci().Skip(n).First()}");
+            Console.WriteLine("---");
+            Console.WriteLine($"FibRecurse({n}) = {LinqHelpers.Fibonacci(n)}");
+            Console.WriteLine("---");
         }
     }
 
@@ -90,6 +102,16 @@ namespace IntechCode.Tests
         public static IMyEnumerable<T> Where<T>(this IMyEnumerable<T> @this, Func<T, bool> predicate)
         {
             return new En<T>(@this, predicate);
+        }
+
+        public static IMyEnumerable<G> Select<T, G>(this IMyEnumerable<T> @this, Func<T, G> f)
+        {
+            return null;
+        }
+
+        public static IEnumerable<G> YSelect<T, G>(this IMyEnumerable<T> @this, Func<T, G> f)
+        {
+            return null;
         }
 
 

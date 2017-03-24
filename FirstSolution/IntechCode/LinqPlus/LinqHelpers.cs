@@ -16,7 +16,25 @@ namespace IntechCode.LinqPlus
 
         public static IEnumerable<int> Fibonacci()
         {
-            return null;
+            int v = 0;
+            int prev = 1;
+            while(true)
+            {
+                int prevV = v;
+                yield return v;
+                v += prev;
+                prev = prevV;
+            }
+        }
+
+        public static IEnumerable<int> MyFavoriteNumbers()
+        {
+            yield return 3;
+            yield return 33;
+            yield return 39876;
+            yield return 14;
+            yield return 981237;
+            yield return 3712;
         }
 
     }
