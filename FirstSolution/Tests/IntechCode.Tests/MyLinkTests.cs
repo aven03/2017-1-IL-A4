@@ -42,14 +42,14 @@ namespace IntechCode.Tests
         public void Fibo()
         {
             int num = 0;
-            foreach (var i in LinqHelpers.Fibonacci().Take(30))
+            foreach (var i in LinqHelpers.Fibonacci().Take(20))
             {
                 i.Should().Be(LinqHelpers.Fibonacci(num));
                 ++num;
             }
         }
 
-        [TestCase(44)]
+        [TestCase(40)]
         public void Fibo_recursive_performance( int n )
         {
             Console.WriteLine("---");
@@ -58,6 +58,50 @@ namespace IntechCode.Tests
             Console.WriteLine($"FibRecurse({n}) = {LinqHelpers.Fibonacci(n)}");
             Console.WriteLine("---");
         }
+
+
+        [Test]
+        [Fact]
+        public void SelectYTest()
+        {
+            var l = new MyList<int>();
+            l.Add(1);
+            l.Add(23);
+            l.Add(234);
+            l.Add(98);
+            l.Add(78676);
+            l.Add(3333);
+            l.Add(2121);
+            int num = 0;
+            foreach (string s in l.YSelect(e => e.ToString()))
+            {
+                s.Should().Be(l[num].ToString());
+                num++;
+            }
+        }
+
+        // Test
+
+        [Test]
+        [Fact]
+        public void MyList_implements_select()
+        {
+            var l = new MyList<int>();
+            l.Add(1);
+            l.Add(2);
+            l.Add(3);
+            l.Add(4);
+            l.Add(5);
+            l.Add(6);
+
+            int num = 0;
+            foreach (string s in l.Select(e => e.ToString()))
+            {
+                s.Should().Be(l[num].ToString());
+                num++;
+            }
+        }
+
     }
 
     static class MyLinqDeFou
@@ -104,14 +148,59 @@ namespace IntechCode.Tests
             return new En<T>(@this, predicate);
         }
 
-        public static IMyEnumerable<G> Select<T, G>(this IMyEnumerable<T> @this, Func<T, G> f)
+        class EnSelect<T, G> : IMyEnumerable<G>
         {
-            return null;
+            readonly IMyEnumerable<T> _source;
+            readonly Func<T, G> _map;
+
+            public EnSelect(IMyEnumerable<T> s, Func<T, G> p)
+            {
+                _source = s;
+                _map = p;
+            }
+
+            class E : IMyEnumerator<G>
+            {
+                readonly IMyEnumerator<T> _source;
+                readonly Func<T, G> _map;
+
+                public E(EnSelect<T, G> e)
+                {
+                    _source = e._source.GetEnumerator();
+                    _map = e._map;
+                }
+
+                public G Current => _map(_source.Current);
+
+                public bool MoveNext()
+                {
+                    while (_source.MoveNext())
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+
+            public IMyEnumerator<G> GetEnumerator() => new E(this);
         }
 
-        public static IEnumerable<G> YSelect<T, G>(this IMyEnumerable<T> @this, Func<T, G> f)
+
+        // Select
+
+        public static IMyEnumerable<G> Select<T, G>(this IMyEnumerable<T> @this, Func<T, G> map)
         {
-            return null;
+            return new EnSelect<T, G>(@this, map);
+        }
+
+
+
+        public static IEnumerable<G> YSelect<T, G>(this IMyEnumerable<T> @this, Func<T, G> map)
+        {
+            foreach (T t in @this)
+            {
+                yield return map(t);
+            }
         }
 
 
