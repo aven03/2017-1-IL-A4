@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,9 +7,11 @@ using Xunit;
 
 namespace IntechCode.Tests
 {
+    [TestFixture]
     public class ByRefOrOutTests
     {
         [Fact]
+        [Test]
         public void byref_demo()
         {
             int i = 0;

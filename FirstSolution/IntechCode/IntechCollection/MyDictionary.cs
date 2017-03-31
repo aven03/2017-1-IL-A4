@@ -27,16 +27,36 @@ namespace IntechCode.IntechCollection
             _buckets = new Node[7];
         }
 
-        public TValue this[TKey key] => throw new NotImplementedException();
+        public TValue this[TKey key]
+        {
+            get
+            {
+                TValue found;
+                if (TryGetValue(key, out found)) return found;
+                throw new KeyNotFoundException();
+            }
+            set => DoAdd(key, value, true);
+        }
 
         public int Count => _count;
 
         public void Add(TKey key, TValue value)
         {
+            DoAdd(key, value, false);
+        }
+
+        void DoAdd(TKey key, TValue value, bool allowUpdate)
+        {
             int idxBucket = Math.Abs(key.GetHashCode()) % _buckets.Length;
             Node head = _buckets[idxBucket];
-            if (head != null && FindIn(head, key) != null )
+            Node found;
+            if (head != null && (found = FindIn(head, key)) != null)
             {
+                if(allowUpdate)
+                {
+                    found.Data = new KeyValuePair<TKey, TValue>(found.Data.Key, value);
+                    return;
+                }
                 throw new Exception("Duplicate key.");
             }
             _buckets[idxBucket] = new Node()
@@ -66,11 +86,6 @@ namespace IntechCode.IntechCollection
             return head != null ? FindIn(head, key) != null : false;
         }
 
-        public IMyEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
         public bool Remove(TKey key)
         {
             throw new NotImplementedException();
@@ -78,7 +93,54 @@ namespace IntechCode.IntechCollection
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            throw new NotImplementedException();
+            int idxBucket = Math.Abs(key.GetHashCode()) % _buckets.Length;
+            Node n = _buckets[idxBucket];
+            if (n == null || (n = FindIn(n, key)) == null)
+            {
+                value = default(TValue);
+                return false;
+            }
+            value = n.Data.Value;
+            return true;
         }
+
+        class E : IMyEnumerator<KeyValuePair<TKey,TValue>>
+        {
+            readonly MyDictionary<TKey,TValue> _dictionnary;
+            Node _currentNode;
+            int _currentIndex;
+
+            public E(MyDictionary<TKey, TValue> theDict)
+            {
+                _dictionnary = theDict;
+                _currentIndex = -1;
+            }
+
+            public KeyValuePair<TKey, TValue> Current  => _currentNode.Data;
+
+            public bool MoveNext()
+            {
+                if( _currentNode != null && _currentNode.Next != null)
+                {
+                    _currentNode = _currentNode.Next;
+                    return true;
+                }
+                while (++_currentIndex < _dictionnary._buckets.Length)
+                {
+                    if (_dictionnary._buckets[_currentIndex] != null)
+                    {
+                        _currentNode = _dictionnary._buckets[_currentIndex];
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        public IMyEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            return new E(this);
+        }
+
     }
 }

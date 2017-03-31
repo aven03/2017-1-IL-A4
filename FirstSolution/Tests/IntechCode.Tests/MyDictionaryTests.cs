@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using IntechCode.IntechCollection;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,10 +8,12 @@ using Xunit;
 
 namespace IntechCode.Tests
 {
+    [TestFixture]
     public class MyDictionaryTests
     {
         [Fact]
-        public void modulo_in_csharp_propagates_negative_value()
+        [Test]
+        public void Modulo_in_csharp_propagates_negative_value()
         {
             {
                 int i = -3;
@@ -25,7 +28,8 @@ namespace IntechCode.Tests
         }
 
         [Fact]
-        public void adding_existing_key_throws_an_exception()
+        [Test]
+        public void Adding_existing_key_throws_an_exception()
         {
             var d = new MyDictionary<int, string>();
             d.Add(1, "One");
@@ -38,7 +42,8 @@ namespace IntechCode.Tests
         }
 
         [Fact]
-        public void iterating_on_a_dictionary_gives_the_KeyValuePair_items()
+        [Test]
+        public void Iterating_on_a_dictionary_gives_the_KeyValuePair_items()
         {
             var d = new MyDictionary<int, string>();
             d.Add(1, "One");
@@ -55,7 +60,17 @@ namespace IntechCode.Tests
             turn.Should().Be(3);
         }
 
-        [Theory]
+        [Test]
+        [Fact]
+        public void finding_a_value()
+        {
+            var d = new MyDictionary<string, int>();
+            d.Add("One", 1);
+            d.ContainsKey("One").Should().BeTrue();
+            d["One"].Should().Be(1);
+        }
+
+        [Xunit.Theory]
         [InlineData(56)]
         [InlineData(979)]
         [InlineData(-143)]
@@ -63,11 +78,19 @@ namespace IntechCode.Tests
         [InlineData(10928)]
         [InlineData(365)]
         [InlineData(0)] // No seed!
+        // For NUnit
+        [TestCase(56)]
+        [TestCase(979)]
+        [TestCase(-143)]
+        [TestCase(98)]
+        [TestCase(10928)]
+        [TestCase(365)]
+        [TestCase(0)] // No seed!
         public void ContainsKey_in_a_dictionary( int seed )
         {
             // Arrange
             var r = seed == 0 ? new Random() : new Random( seed );
-            MyList<int> keys = CreateRandomListOfUniqueNumber(r);
+            MyList<int> keys = CreateRandomListOfUniqueNumber(r, r.Next(30) );
             var sut = new MyDictionary<int, string>();
             // Act: adds unique numbers to the sut.
             foreach (var num in keys)
@@ -96,7 +119,6 @@ namespace IntechCode.Tests
                 var rand = r.Next();
                 if (keys.IndexOf(rand) < 0) keys.Add(rand);
             }
-
             return keys;
         }
     }
