@@ -151,12 +151,13 @@ namespace IntechCode.Tests
         {
             public string Name { get; set; }
             public string FirstName { get; set; }
+            public int Age { get; set; }
 
             public override bool Equals(object obj)
             {
                 User u = obj as User;
                 if (u == null) return false;
-                return u.Name == Name;
+                return u.Name == Name && u.FirstName == FirstName && u.Age == Age;
             }
 
             public override int GetHashCode() => Name != null ? Name.GetHashCode() : 0;
