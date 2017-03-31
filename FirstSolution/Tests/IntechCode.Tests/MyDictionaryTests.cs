@@ -121,5 +121,46 @@ namespace IntechCode.Tests
             }
             return keys;
         }
+
+
+
+        [Test]
+        public void testing_equality_injection_in_MyDictionary()
+        {
+            MyDictionary<string, object> dCS = new MyDictionary<string, object>();
+            dCS.Add("A", null);
+            dCS.Add("a", null);
+
+            // Caca: (k1,k2) => k1.ToLowerInvariant() == k2.ToLowerInvariant()
+            MyDictionary<string, object> dCI = new MyDictionary<string, object>( 
+                StringComparer.OrdinalIgnoreCase.Equals,
+                StringComparer.OrdinalIgnoreCase.GetHashCode
+                );
+            dCI.Add("A", null);
+            Action buggyAdd = () => dCI.Add("a", null);
+            buggyAdd.ShouldThrow<Exception>();
+
+            //Better (Use IEqualityComparer)
+            MyDictionary<string, object> dCI2 = new MyDictionary<string, object>( StringComparer.OrdinalIgnoreCase );
+            dCI2.Add("A", null);
+            Action buggyAdd2 = () => dCI2.Add("a", null);
+            buggyAdd2.ShouldThrow<Exception>();
+        }
+
+        class User
+        {
+            public string Name { get; set; }
+            public string FirstName { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                User u = obj as User;
+                if (u == null) return false;
+                return u.Name == Name;
+            }
+
+            public override int GetHashCode() => Name != null ? Name.GetHashCode() : 0;
+        }
+
     }
 }

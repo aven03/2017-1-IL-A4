@@ -21,10 +21,20 @@ namespace IntechCode.IntechCollection
         }
         Node[] _buckets;
         int _count;
+        readonly Func<TKey, TKey, bool> _equality;
+        readonly Func<TKey, int> _hash;
 
-        public MyDictionary()
+        public MyDictionary(Func<TKey, TKey, bool> equality = null, Func<TKey, int> hash = null)
         {
+            _equality = equality ?? EqualityComparer<TKey>.Default.Equals;
+            _hash = hash ?? EqualityComparer<TKey>.Default.GetHashCode;
             _buckets = new Node[7];
+        }
+
+        public MyDictionary(IEqualityComparer<TKey> comparer)
+            : this( comparer == null ? (Func<TKey, TKey, bool>)null : comparer.Equals, 
+                    comparer == null ? (Func<TKey,int >)null :  comparer.GetHashCode)
+        {
         }
 
         public TValue this[TKey key]
@@ -47,7 +57,7 @@ namespace IntechCode.IntechCollection
 
         void DoAdd(TKey key, TValue value, bool allowUpdate)
         {
-            int idxBucket = Math.Abs(key.GetHashCode()) % _buckets.Length;
+            int idxBucket = Math.Abs(_hash(key)) % _buckets.Length;
             Node head = _buckets[idxBucket];
             Node found;
             if (head != null && (found = FindIn(head, key)) != null)
@@ -72,7 +82,7 @@ namespace IntechCode.IntechCollection
             Debug.Assert(head != null);
             do
             {
-                if (EqualityComparer<TKey>.Default.Equals(key, head.Data.Key)) break;
+                if (_equality(key, head.Data.Key) ) break;
                 head = head.Next;
             }
             while (head != null);
@@ -81,7 +91,7 @@ namespace IntechCode.IntechCollection
 
         public bool ContainsKey(TKey key)
         {
-            int idxBucket = Math.Abs(key.GetHashCode()) % _buckets.Length;
+            int idxBucket = Math.Abs(_hash(key)) % _buckets.Length;
             Node head = _buckets[idxBucket];
             return head != null ? FindIn(head, key) != null : false;
         }
@@ -93,7 +103,7 @@ namespace IntechCode.IntechCollection
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            int idxBucket = Math.Abs(key.GetHashCode()) % _buckets.Length;
+            int idxBucket = Math.Abs(_hash(key)) % _buckets.Length;
             Node n = _buckets[idxBucket];
             if (n == null || (n = FindIn(n, key)) == null)
             {
