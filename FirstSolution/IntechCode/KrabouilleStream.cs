@@ -9,6 +9,7 @@ namespace IntechCode
     {
         readonly Stream _inner;
         readonly string _password;
+        byte _s;
 
         public KrabouilleStream( Stream inner, string password )
         {
@@ -16,6 +17,7 @@ namespace IntechCode
             if (string.IsNullOrWhiteSpace(password)) throw new ArgumentNullException(nameof(password));
             _inner = inner;
             _password = password;
+            _s = (byte)password.Length;
         }
 
         public override bool CanRead => _inner.CanRead;
