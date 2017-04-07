@@ -5,16 +5,27 @@ using System.Text;
 
 namespace IntechCode
 {
+
+    public enum KrabouilleMode
+    {
+        Krabouille,
+        UnKrabouille
+    }
+
     public class KrabouilleStream : Stream
     {
         readonly Stream _inner;
+        readonly KrabouilleMode _mode;
         readonly string _password;
         byte _s;
 
-        public KrabouilleStream( Stream inner, string password )
+        public KrabouilleStream( Stream inner, string password, KrabouilleMode mode )
         {
             if (inner == null) throw new ArgumentNullException(nameof(inner));
             if (string.IsNullOrWhiteSpace(password)) throw new ArgumentNullException(nameof(password));
+            if (!inner.CanRead && mode == KrabouilleMode.UnKrabouille) throw new ArgumentException("Must be readable.", nameof(inner));
+            if (!inner.CanWrite && mode == KrabouilleMode.Krabouille) throw new ArgumentException("Must be writable.", nameof(inner));
+            _mode = mode;
             _inner = inner;
             _password = password;
             _s = (byte)password.Length;

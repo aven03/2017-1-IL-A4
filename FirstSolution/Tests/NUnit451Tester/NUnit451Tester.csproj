@@ -24,7 +24,7 @@
   <PropertyGroup>
     <StartAction>Program</StartAction>
     <StartProgram>$(SolutionDir)packages\NUnit.Runners.Net4.2.6.4\tools\nunit.exe</StartProgram>
-    <StartArguments>$(SolutionDir)Tests\IntechCode.Tests\bin\Debug\net451\IntechCode.Tests.dll</StartArguments>
+    <StartArguments>"$(SolutionDir)Tests\IntechCode.Tests\bin\Debug\net451\IntechCode.Tests.dll"</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
