@@ -49,7 +49,23 @@ namespace IntechCode
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            return _inner.Read(buffer, offset, count);
+            if (_mode == KrabouilleMode.Krabouille) throw new InvalidOperationException();
+            int lenRead = _inner.Read(buffer, offset, count);
+            if (count > lenRead) count = lenRead;
+            for (int i = offset; i < offset+count; ++i )
+            {
+                buffer[i] ^= _s;
+            }
+            return lenRead;
+        }
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            if (_mode == KrabouilleMode.UnKrabouille) throw new InvalidOperationException();
+            for (int i = offset; i < offset + count; ++i)
+            {
+                buffer[i] ^= _s;
+            }
+            _inner.Write(buffer, offset, count);
         }
 
         /// <summary>
@@ -74,9 +90,5 @@ namespace IntechCode
 
         public override void SetLength(long value) => _inner.SetLength(value);
 
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            _inner.Write(buffer, offset, count);
-        }
     }
 }
