@@ -5,16 +5,27 @@ using System.Text;
 
 namespace IntechCode
 {
+
+    public enum KrabouilleMode
+    {
+        Krabouille,
+        UnKrabouille
+    }
+
     public class KrabouilleStream : Stream
     {
         readonly Stream _inner;
+        readonly KrabouilleMode _mode;
         readonly string _password;
         byte _s;
 
-        public KrabouilleStream( Stream inner, string password )
+        public KrabouilleStream( Stream inner, string password, KrabouilleMode mode )
         {
             if (inner == null) throw new ArgumentNullException(nameof(inner));
             if (string.IsNullOrWhiteSpace(password)) throw new ArgumentNullException(nameof(password));
+            if (!inner.CanRead && mode == KrabouilleMode.UnKrabouille) throw new ArgumentException("Must be readable.", nameof(inner));
+            if (!inner.CanWrite && mode == KrabouilleMode.Krabouille) throw new ArgumentException("Must be writable.", nameof(inner));
+            _mode = mode;
             _inner = inner;
             _password = password;
             _s = (byte)password.Length;
@@ -38,7 +49,23 @@ namespace IntechCode
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            return _inner.Read(buffer, offset, count);
+            if (_mode == KrabouilleMode.Krabouille) throw new InvalidOperationException();
+            int lenRead = _inner.Read(buffer, offset, count);
+            if (count > lenRead) count = lenRead;
+            for (int i = offset; i < offset+count; ++i )
+            {
+                buffer[i] ^= _s;
+            }
+            return lenRead;
+        }
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            if (_mode == KrabouilleMode.UnKrabouille) throw new InvalidOperationException();
+            for (int i = offset; i < offset + count; ++i)
+            {
+                buffer[i] ^= _s;
+            }
+            _inner.Write(buffer, offset, count);
         }
 
         /// <summary>
@@ -63,9 +90,5 @@ namespace IntechCode
 
         public override void SetLength(long value) => _inner.SetLength(value);
 
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            _inner.Write(buffer, offset, count);
-        }
     }
 }
