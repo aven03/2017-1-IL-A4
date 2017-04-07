@@ -8,11 +8,14 @@ namespace IntechCode
     public class KrabouilleStream : Stream
     {
         readonly Stream _inner;
+        readonly string _password;
 
-        public KrabouilleStream( Stream inner )
+        public KrabouilleStream( Stream inner, string password )
         {
             if (inner == null) throw new ArgumentNullException(nameof(inner));
+            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentNullException(nameof(password));
             _inner = inner;
+            _password = password;
         }
 
         public override bool CanRead => _inner.CanRead;
